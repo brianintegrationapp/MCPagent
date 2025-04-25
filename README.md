@@ -1,86 +1,105 @@
-# Content Import Example
+# MCP Agent Demo
 
-This is an application showcasing how you can implement Importing Content and Files into a knowledge base using [Integration.app](https://integration.app). The app is built with Next.js/React.
+A **Next.js** application demonstrating the integration of large language models (LLMs) with real‑world tools using the **Model Context Protocol (MCP)** server from Integration.app. This project showcases a fully operational AI assistant capable of dynamically discovering and invoking actions (e.g., creating HubSpot contacts, syncing documents) without hard‑coding every endpoint.
 
-[Demo](https://content-import-example.vercel.app/)
+## Features
 
-## Prerequisites
+- **Dynamic Tool Invocation**: The AI agent discovers available tools at runtime via MCP, turning natural language into executable actions.
+- **Chat Interface**: Interactive chat powered by OpenAI GPT-4 (or GPT-4o), with automatic function‑calling support.
+- **HubSpot Integration**: Create and list contacts in HubSpot CRM through preconfigured Integration.app actions.
+- **Document Sync & Management**: Connect to external data sources, sync documents via Inngest flows, and extract text from files using AWS S3 & Unstructured API.
+- **Webhooks & Flows**: Handle events (create/update/delete/download) via webhooks and trigger Inngest-driven background jobs.
+- **Authentication**: Customer‑scoped tokens generated on the server; secure Integration.app workspace credentials.
+- **Scalable Architecture**: Designed for production—auditable, tenant‑isolated, rate‑limited, and observable.
 
-- Node.js 18+
-- Integration.app workspace credentials (Workspace Key and Secret). [Get credentials](https://console.integration.app/settings/workspace) from the workspace settings.
-- MongoDB connection string (We provide a docker-compose file to spin up a local MongoDB instance. See [Using mongodb via Docker](#using-mongodb-via-docker) for more details.)
-- AWS credentials (for S3)
-
-## Setup
-
-### 1. **Clone repository & Install dependencies:**
-
-```bash
-npm install
-# or
-yarn install
-```
-
-### 2. **Set up environment variables file:**
-
-```bash
-# Copy the sample environment file
-cp .env-sample .env
-```
-
-### 3. **Add your credentials to the `.env` file:**
-
-> Note: The following credentials are optional but enable additional features:
-
-- **AWS S3**: Enables file download and storage in S3
-- **Unstructured.io**: Enables text extraction from PDFs, Word documents, and other file formats
-
-### 4. **Add the Scenario to Your Workspace:**
-
-This application relies on predefined [flows](https://console.integration.app/docs/building/blocks/flows), [actions](https://console.integration.app/docs/building/blocks/actions), and other primitives, all organized within a **Scenario template**
-
-To use the same flows and actions in your workspace, navigate to the [Continuously Import Content to My App Scenario](https://integration.app/scenarios/continuously-import-content-to-my-app) and click the **"Add to App"** button. This will add the required flows and actions, data sources and other primitives to your workspace.
-
-### 5. Configure your apps
-
-The [Continuously Import Content to My App Scenario](https://integration.app/scenarios/continuously-import-content-to-my-app) adds **8 apps** to your workspace and for most apps to work, you'll need to provide configuration parameters. The configuration guide for each apps explains how to get the credentials needed. See video below for an overview of the configuration process:
-
-https://github.com/user-attachments/assets/272197b4-aea9-40ff-a444-ac0fa17f672f
-
-### 6. **Start the development server:**
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Using mongodb via Docker
+## Getting Started
 
 ### Prerequisites
 
-- Docker and Docker Compose installed on your machine
+- Node.js (v16+)
+- Docker & Docker Compose (for running MCP server locally)
+- A MongoDB instance (URI in `MONGODB_URI`)
+- AWS S3 credentials (for file uploads)
+- Integration.app credentials:
+  - `INTEGRATION_APP_TOKEN`
+  - `INTEGRATION_KEY`
+  - `INTEGRATION_APP_WORKSPACE_KEY`
+  - `INTEGRATION_APP_WORKSPACE_SECRET`
+- OpenAI API key: `OPENAI_API_KEY`
+- Unstructured API credentials (optional for text extraction):
+  - `UNSTRUCTURED_API_KEY`
+  - `UNSTRUCTURED_API_URL`
 
-### Setting up MongoDB
+### Installation
 
-If you want to use MongoDB via Docker, you can do so by running the following command:
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/your-org/mcp-agent-demo.git
+   cd mcp-agent-demo
+   ```
 
-```bash
-docker-compose up
+2. **Install dependencies**:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Environment Variables**:
+   Create a `.env.local` in the root:
+   ```ini
+   OPENAI_API_KEY=sk-...
+   MONGODB_URI=mongodb+srv://...
+   AWS_ACCESS_KEY_ID=...
+   AWS_SECRET_ACCESS_KEY=...
+   AWS_BUCKET_NAME=...
+   AWS_REGION=...
+   INTEGRATION_APP_TOKEN=...
+   INTEGRATION_KEY=...
+   INTEGRATION_APP_WORKSPACE_KEY=...
+   INTEGRATION_APP_WORKSPACE_SECRET=...
+   UNSTRUCTURED_API_KEY=...
+   UNSTRUCTURED_API_URL=https://api.unstructured.io
+   ```
+
+4. **Run integration.app MCP server** (locally or remote):
+   ```bash
+   # via Docker Compose
+   docker-compose up -d mcp-server
+
+   # or manually
+   npm run start:mcp-server
+   ```
+
+5. **Start the Next.js app**:
+   ```bash
+   npm run dev
+   ```
+
+6. **Open** `http://localhost:3000` in your browser.
+
+## Usage
+
+- **Chat Agent**: Navigate to `/chat`, type requests like:
+  > *"Create a new contact John Doe with email john@example.com"*
+
+- **Contacts List**: View live HubSpot contacts in the sidebar; updates automatically after creation.
+
+- **Integrations**: Go to `/integrations` to connect to external data sources, sync documents, and pick folders/files to subscribe.
+
+## Architecture Overview
+
+```text
+Next.js Frontend   ←→  /api/*  ←→  MCP Chat Route
+           │                        │
+           │                        └→ StdioClientTransport → MCP Server → Integration.app actions
+           │
+           └→ Integration.app React Provider
+
+Inngest Functions (sync, download) ←→ MongoDB ←→ AWS S3 / Unstructured
 ```
 
-You can now use the `MONGODB_URI` environment variable to connect to the database:
-
-```env
-MONGODB_URI=mongodb://admin:password123@localhost:27017/knowledge
-```
-
-## Todos
-
-- [ ] Get events working for all apps
-
-## License
-
-MIT
+- **MCP Chat Route** (`app/api/mcp-chat/route.ts`): Bridges GPT function calls to MCP tools.
+- **Integration Provider** (`app/integration-provider.tsx`): Fetches per-customer tokens for Integration.app SDK.
+- **Inngest Workflows** (`app/api/inngest`, `lib/flows.ts`): Background jobs for document sync and processing.
+- **Webhooks** (`app/api/webhooks/*`): Handle external events from Integration.app or HubSpot.
