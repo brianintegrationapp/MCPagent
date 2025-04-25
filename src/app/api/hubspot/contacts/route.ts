@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const HUBSPOT_API_TOKEN = 'pat-na2-22a82878-f217-4ff0-a906-0b8509200db3';
+
 
 export async function GET() {
   try {
