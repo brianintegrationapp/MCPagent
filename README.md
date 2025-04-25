@@ -34,7 +34,7 @@ A **Next.js** application demonstrating the integration of large language models
 
 1. **Clone the repo**:
    ```bash
-   git clone https://github.com/your-org/mcp-agent-demo.git
+   git clone https://github.com/brianintegrationapp/MCPagent.git
    cd mcp-agent-demo
    ```
 
