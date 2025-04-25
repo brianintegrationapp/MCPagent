@@ -7,8 +7,6 @@ A **Next.js** application demonstrating the integration of large language models
 - **Dynamic Tool Invocation**: The AI agent discovers available tools at runtime via MCP, turning natural language into executable actions.
 - **Chat Interface**: Interactive chat powered by OpenAI GPT-4 (or GPT-4o), with automatic function‑calling support.
 - **HubSpot Integration**: Create and list contacts in HubSpot CRM through preconfigured Integration.app actions.
-- **Document Sync & Management**: Connect to external data sources, sync documents via Inngest flows, and extract text from files using AWS S3 & Unstructured API.
-- **Webhooks & Flows**: Handle events (create/update/delete/download) via webhooks and trigger Inngest-driven background jobs.
 - **Authentication**: Customer‑scoped tokens generated on the server; secure Integration.app workspace credentials.
 - **Scalable Architecture**: Designed for production—auditable, tenant‑isolated, rate‑limited, and observable.
 
