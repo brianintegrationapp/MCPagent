@@ -13,13 +13,11 @@ export default function HomePage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Content Import Example
+              MCP Agent Example
             </h1>
             <p className="text-muted-foreground">
               This app uses{" "}
-              <Link href="https://integration.app">Integration.app</Link> to
-              fetch data from different sources and update subscribed content
-              when changes are detected.
+              <Link href="https://integration.app">Integration.app</Link>'s MCP Server with Hubspot to enable an embedded AI Agent with the ability to perform actions in the connected Hubspot CRM based on natural language input from the chat user.
             </p>
           </div>
         </div>

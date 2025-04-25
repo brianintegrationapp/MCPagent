@@ -14,8 +14,8 @@ const instrumentSans = Instrument_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Content Import Example",
-    template: "%s | Content Import Example",
+    default: "MCP Agent Demo",
+    template: "%s | MCP Agent Demo",
   },
 };
 

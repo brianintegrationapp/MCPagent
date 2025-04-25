@@ -11,12 +11,8 @@ const navigation = [
     href: "/",
   },
   {
-    title: "Integrations",
-    href: "/integrations",
-  },
-  {
-    title: "Knowledge",
-    href: "/knowledge",
+    title: "Agent",
+    href: "/chat",
   }
 ];
 
